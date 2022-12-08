@@ -14,7 +14,11 @@ export class ContactList {
         } 
         this._element = element;
         this._users = data;
-        this.filter = this.filter.bind(this)
+        this.filter = this.filter.bind(this);
+        this.onListItemClick = this.onListItemClick.bind(this);
+        this.onHtmlClick = this.onHtmlClick.bind(this);
+        this._element.addEventListener('click', this.onListItemClick)
+        document.documentElement.addEventListener('click', this.onHtmlClick)
     }
 
     _clear() {
@@ -40,7 +44,7 @@ export class ContactList {
                 <span class="contact-list-item-phone">${ contact.phone_number}</span>
                 <a href="tel:${ contact.phone_number}" class="contact-list-item-action">Звонок</a>
             </div>
-            <div class="contact-list-item-details hidden">Подробная информация о клиенте</div>
+            <div class="contact-list-item-details hidden">Подробная информация о клиенте: ${contact.username}</div>
         </li>
         `;
     }
@@ -57,6 +61,21 @@ export class ContactList {
     filter(text) {
         const filterCallback = filterCb.bind(null, text)
         this._renderItems(filterBy(this._users, filterCallback))
+    }
+
+    onListItemClick(e) {
+        const target = e.target
+        if (target.classList.contains('contact-list-item-action')) {
+            return;
+        }
+        e.stopImmediatePropagation();
+        const listItem = e.target.closest('.contact-list-item');
+        const details = listItem.querySelector('.contact-list-item-details');
+        details.classList.toggle('hidden')
+    }
+
+    onHtmlClick(e) {
+        console.log(e)
     }
 
 }
